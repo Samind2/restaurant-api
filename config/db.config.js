@@ -1,10 +1,10 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 
 module.exports = {
-  HOST: "ep-gentle-bar-a11v5ltt-pooler.ap-southeast-1.aws.neon.tech",
-  USER: "default",
-  PASSWORD: "5iMSa3hfRlGq",
-  DB: "verceldb",
+  HOST: process.env.HOST,
+  USER: process.env.USER,
+  PASSWORD: process.env.PASSWORD,
+  DB: process.env.DB,
   dialect: "postgres",
   pool: {
     max: 5,
