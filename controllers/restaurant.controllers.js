@@ -1,14 +1,18 @@
 const Restaurant = require("../models/restaurant.model");
 
 //Create and Save a New Restaurant
+// สร้างและบันทึกร้านอาหารใหม่
 exports.create = async (req, res) => {
+  // ดึงข้อมูล name, type และ imageUrl จาก body ของคำขอ
   const { name, type, imageUrl } = req.body;
+  // ตรวจสอบว่าข้อมูล name, type และ imageUrl ต้องไม่เป็นค่าว่าง
   if (!name || !type || !imageUrl) {
     res.status(400).send({
       message: "Name, Type or ImgUrl can not be empty!",
     });
   }
 
+  // ตรวจสอบว่ามีร้านอาหารที่มีชื่อนี้อยู่แล้วหรือไม่
   await Restaurant.findOne({ where: { name: name } }).then((restaurant) => {
     if (restaurant) {
       res.status(400).send({
@@ -16,12 +20,13 @@ exports.create = async (req, res) => {
       });
       return;
     }
-    //Create a New Restaurant
+    // สร้างร้านอาหารใหม่
     const newRestaurant = {
       name: name,
       type: type,
       imageUrl: imageUrl,
     };
+    // บันทึกร้านอาหารใหม่ลงฐานข้อมูล
     Restaurant.create(newRestaurant)
       .then((data) => {
         res.send(data);
@@ -29,12 +34,13 @@ exports.create = async (req, res) => {
       .catch((error) => {
         res.status(500).send({
           message:
-            error.message || "Somthing error occured creating the restaurant.",
+            error.message || "Something error occured creating the restaurant.",
         });
       });
   });
 };
 
+// ดึงข้อมูลร้านอาหารทั้งหมด
 exports.getAll = async (req, res) => {
   await Restaurant.findAll()
     .then((data) => {
@@ -43,18 +49,18 @@ exports.getAll = async (req, res) => {
     .catch((error) => {
       res.status(500).send({
         message:
-          error.message || "Somthing error occured creating the restaurant.",
+          error.message || "Something error occured creating the restaurant.",
       });
     });
 };
 
-//get by ID
+// ดึงข้อมูลร้านอาหารตาม ID
 exports.getById = async (req, res) => {
   const id = req.params.id;
   await Restaurant.findByPk(id)
     .then((data) => {
       if (!data) {
-        res.status(404).send({ message: "No found Restaurants with id" + id });
+        res.status(404).send({ message: "No found Restaurants with id " + id });
       } else {
         res.send(data);
       }
@@ -62,12 +68,12 @@ exports.getById = async (req, res) => {
     .catch((error) => {
       res.status(500).send({
         message:
-          error.message || "Somthing error occured creating the restaurant.",
+          error.message || "Something error occured creating the restaurant.",
       });
     });
 };
 
-//update
+// อัปเดตร้านอาหาร
 exports.update = async (req, res) => {
   const id = req.params.id;
   await Restaurant.update(req.body, {
@@ -81,7 +87,7 @@ exports.update = async (req, res) => {
       } else {
         res.send({
           message:
-            "Cannot update restaurant with id" +
+            "Cannot update restaurant with id " +
             id +
             ". Maybe restaurant was not found or res.body is empty!",
         });
@@ -91,15 +97,16 @@ exports.update = async (req, res) => {
       res.status(500).send({
         message:
           error.massage ||
-          "Somthing error occured while creating the restaurant.",
+          "Something error occured while creating the restaurant.",
       });
     });
 };
 
-// Delete
+// ลบร้านอาหาร
 exports.delete = async (req, res) => {
   const id = req.params.id;
   try {
+    // ลบร้านอาหารตาม ID
     const num = await Restaurant.destroy({
       where: { id: id },
     });
@@ -118,4 +125,3 @@ exports.delete = async (req, res) => {
     });
   }
 };
-

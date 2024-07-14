@@ -1,20 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const restaurantController = require("../controllers/restaurant.controllers");
+const express = require("express"); // นำเข้า express framework
+const router = express.Router(); // สร้าง router object จาก express
+const restaurantController = require("../controllers/restaurant.controllers"); // นำเข้า controller สำหรับ restaurant
 
-//Creat a restaurant
-router.post("/", restaurantController.create);
+// สร้าง restaurant ใหม่
+router.post("/", restaurantController.create); 
 
-//get all restaurants
-router.get("/", restaurantController.getAll);
+// ดึงข้อมูล restaurant ทั้งหมด
+router.get("/", restaurantController.getAll); 
 
-//get a restaurants by Id
-router.get("/:id", restaurantController.getById);
+// ดึงข้อมูล restaurant โดยใช้ id
+router.get("/:id", restaurantController.getById); 
 
-// Update a restaurant by ID
-router.put("/:id", restaurantController.update);
+// อัพเดทข้อมูล restaurant โดยใช้ id
+router.put("/:id", restaurantController.update); 
 
-// Delete a restaurant by ID
-router.delete("/:id", restaurantController.delete);
+// ลบ restaurant โดยใช้ id
+router.delete("/:id", restaurantController.delete); 
 
-module.exports = router;
+module.exports = router; // ส่งออก router เพื่อให้สามารถใช้งานในไฟล์อื่นๆ ได้
