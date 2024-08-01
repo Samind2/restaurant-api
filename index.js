@@ -3,9 +3,14 @@ const PORT = process.env.PORT || 5000; // กำหนดพอร์ตจา�
 const app = express(); // สร้างแอปพลิเคชัน express
 require("dotenv").config(); // นำเข้า dotenv เพื่อโหลดตัวแปรสภาพแวดล้อมจากไฟล์ .env
 const restaurantRouter = require("./routers/restaurant.router"); // นำเข้า router สำหรับ restaurant
-const authRouter = require("./routers/auth.router")
+const authRouter = require("./routers/auth.router");
 const db = require("./models/"); // นำเข้าโมเดลของฐานข้อมูล
 const Role = db.Role; // นำเข้าโมเดล Role
+const cors = require("cors");
+
+const corsOption = () => {
+  origin: "http://localhost:5173";
+};
 
 // โหมดพัฒนา
 /*
@@ -22,6 +27,7 @@ const initRole = () => {
 };
 
 // ใช้ middleware สำหรับจัดการ JSON และ URL-encoded data
+app.use(cors(corsOption));
 app.use(express.json()); // ใช้ middleware เพื่อจัดการกับ JSON request body
 app.use(express.urlencoded({ extended: true })); // ใช้ middleware เพื่อจัดการกับ URL-encoded request body
 

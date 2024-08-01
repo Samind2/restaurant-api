@@ -32,46 +32,54 @@ isAdmin = (req, res, next) => {
           return;
         }
       }
-      return res.status(403).send({message: "Unauthorized access, Require Admim Role!!"})
+      return res
+        .status(403)
+        .send({ message: "Unauthorized access, Require Admim Role!!" });
     });
   });
 };
 
 //is Mod?
 isMod = (req, res, next) => {
-    User.findByPk(req.userId).then((user) => {
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "moderator") {
-            next();
-            return;
-          }
+  User.findByPk(req.userId).then((user) => {
+    user.getRoles().then((roles) => {
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].name === "moderator") {
+          next();
+          return;
         }
-        return res.status(403).send({message: "Unauthorized access, Require Mod Role!!"})
-      });
+      }
+      return res
+        .status(403)
+        .send({ message: "Unauthorized access, Require Mod Role!!" });
     });
-  };
+  });
+};
 
 //is AdminOrMod?
 isModOrAdmin = (req, res, next) => {
-        User.findByPk(req.userId).then((user) => {
-          user.getRoles().then((roles) => {
-            for (let i = 0; i < roles.length; i++) {
-              if (roles[i].name === "moderator" || roles[i].name === "admin" ) {
-                next();
-                return;
-              }
-            }
-            return res.status(403).send({message: "Unauthorized access, Require Moderator Or Admin Role!!"})
-          });
+  User.findByPk(req.userId).then((user) => {
+    user.getRoles().then((roles) => {
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].name === "moderator" || roles[i].name === "admin") {
+          next();
+          return;
+        }
+      }
+      return res
+        .status(403)
+        .send({
+          message: "Unauthorized access, Require Moderator Or Admin Role!!",
         });
-      };
+    });
+  });
+};
 
 //Export
 const authJwt = {
   verifyToken,
   isAdmin,
   isMod,
-  isModOrAdmin
+  isModOrAdmin,
 };
 module.exports = authJwt;
