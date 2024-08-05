@@ -1,21 +1,28 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("./db");
+// models/user.model.js
 
-// กำหนด Schema ของฐานข้อมูลสำหรับตาราง Restaurant
+const { DataTypes } = require("sequelize");
+const sequelize = require("./db"); // นำเข้า instance ของ sequelize ที่เชื่อมต่อกับฐานข้อมูล
+
 const User = sequelize.define("user", {
-  username: {
-    type: DataTypes.STRING, // ประเภทข้อมูลเป็นข้อความ
-    primaryKey: true, // กำหนดให้เป็น Primary Key
-    allowNull: false, // ไม่อนุญาตให้ค่านี้เป็นค่าว่าง
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
   },
-  password: {
-    type: DataTypes.STRING, // ประเภทข้อมูลเป็นข้อความ
-    allowNull: false, // ไม่อนุญาตให้ค่านี้เป็นค่าว่าง
+  userName: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   email: {
-    type: DataTypes.STRING, // ประเภทข้อมูลเป็นข้อความ
-    allowNull: false, // ไม่อนุญาตให้ค่านี้เป็นค่าว่าง
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 });
 
 module.exports = User;
+
