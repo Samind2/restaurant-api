@@ -1,13 +1,25 @@
 const express = require("express");
 const cors = require("cors"); // Import cors package
+require("dotenv").config();
+
 const PORT = process.env.PORT || 5000;
 const app = express();
-require("dotenv").config();
+
 const restaurantRouter = require("./routers/restaurant.router");
 const authRouter = require("./routers/auth.router");
+
 const db = require("./models/");
 const Role = db.Role;
 
+const sequelize = require("./models/db"); // นำเข้า instance ของ sequelize ที่เชื่อมต่อกับฐานข้อมูล
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+};
+
+// Initialize roles
 const initRole = () => {
   Role.create({ id: 1, name: "user" });
   Role.create({ id: 2, name: "moderator" });
@@ -15,11 +27,7 @@ const initRole = () => {
 };
 
 // Use cors middleware
-app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from this origin
-  methods: 'GET,POST,PUT,DELETE',
-  allowedHeaders: 'Content-Type,Authorization'
-}));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

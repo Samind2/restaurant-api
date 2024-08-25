@@ -1,9 +1,12 @@
+
 require('dotenv').config(); // โหลดค่า environment variables
 const { Op } = require('sequelize');
 const User = require("../models/user.model");
 const Role = require("../models/role.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+
 
 exports.signup = async (req, res) => {
   const { userName, email, password, roles } = req.body;

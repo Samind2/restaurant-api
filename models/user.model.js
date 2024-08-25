@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("./db"); // นำเข้า instance ของ sequelize ที่เชื่อมต่อกับฐานข้อมูล
 
 // กำหนด Schema ของฐานข้อมูลสำหรับตาราง User
+
 const User = sequelize.define("user", {
   id: {
     type: DataTypes.INTEGER,

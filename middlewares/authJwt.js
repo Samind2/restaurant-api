@@ -1,82 +1,88 @@
+const { Op } = require('sequelize');
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.User;
 
 // Verify Token
-const verifyToken = (req, res, next) => {
-  // Access token from headers
-  let token = req.headers["x-access-token"]; // Use headers, not header
-
-  // Check if token is provided
+const verifyToken = async (req, res, next) => {
+  const token = req.headers["x-access-token"];
   if (!token) {
-    return res.status(403).send({ message: "No token provided!" }); // 403 Forbidden
+    return res.status(403).send({ message: "No token provided!" });
   }
 
-  // Verify token
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({ message: "Unauthorized!" }); // 401 Unauthorized
-    }
+  try {
+    const decoded = jwt.verify(token, config.secret);
     req.userId = decoded.id;
     next();
-  });
+  } catch (err) {
+    return res.status(401).send({ message: "Unauthorized!" });
+  }
 };
 
 // Check if user is Admin
-const isAdmin = (req, res, next) => {
-  User.findByPk(req.userId)
-    .then(user => user.getRoles())
-    .then(roles => {
-      for (let role of roles) {
-        if (role.name === "admin") {
-          next();
-          return;
-        }
-      }
-      return res.status(403).send({ message: "Unauthorized access, Require Admin Role!" }); // 403 Forbidden
-    })
-    .catch(err => res.status(500).send({ message: err.message }));
+const isAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    const roles = await user.getRoles();
+    const isAdminRole = roles.some((role) => role.name === "admin");
+
+    if (isAdminRole) {
+      next();
+    } else {
+      return res.status(403).send({ message: "Unauthorized access, Require Admin Role!" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
 // Check if user is Moderator
-const isMod = (req, res, next) => {
-  User.findByPk(req.userId)
-    .then(user => user.getRoles())
-    .then(roles => {
-      for (let role of roles) {
-        if (role.name === "moderator") {
-          next();
-          return;
-        }
-      }
-      return res.status(403).send({ message: "Unauthorized access, Require Mod Role!" }); // 403 Forbidden
-    })
-    .catch(err => res.status(500).send({ message: err.message }));
+const isMod = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    const roles = await user.getRoles();
+    const isModRole = roles.some((role) => role.name === "moderator");
+
+    if (isModRole) {
+      next();
+    } else {
+      return res.status(403).send({ message: "Unauthorized access, Require Mod Role!" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
 // Check if user is Admin or Moderator
-const isModOrAdmin = (req, res, next) => {
-  User.findByPk(req.userId)
-    .then(user => user.getRoles())
-    .then(roles => {
-      for (let role of roles) {
-        if (role.name === "moderator" || role.name === "admin") {
-          next();
-          return;
-        }
-      }
-      return res.status(403).send({ message: "Unauthorized access, Require Moderator Or Admin Role!" }); // 403 Forbidden
-    })
-    .catch(err => res.status(500).send({ message: err.message }));
+const isModOrAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(404).send({ message: "User not found" });
+
+    const roles = await user.getRoles();
+    const hasRole = roles.some((role) => role.name === "moderator" || role.name === "admin");
+
+    if (hasRole) {
+      next();
+    } else {
+      return res.status(403).send({ message: "Unauthorized access, Require Moderator Or Admin Role!" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
-// Export middleware
+// Export
 const authJwt = {
   verifyToken,
   isAdmin,
   isMod,
-  isModOrAdmin
+  isModOrAdmin,
 };
 
 module.exports = authJwt;
